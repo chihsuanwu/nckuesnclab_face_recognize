@@ -53,5 +53,7 @@
     <string>Need Location permission</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>Need Location permission</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Need Microphone permission</string>
 </dict>
 </plist>
