@@ -52,22 +52,22 @@ class DetectModel {
 
   }
 
-  Future<DetectResult?> runFlow(Image image) async {
+  Future<DetectResult?> runFlow(InputImage image) async {
     if (!_tfLiteModel.isInitialized) return null;
     if (isBusy) return null;
     isBusy = true;
 
-    final mlKitImage = ImageHelper.createInputImage(image);
-    final result = await _detectFlowCore(mlKitImage, image);
+    // final mlKitImage = ImageHelper.createInputImage(image);
+    final result = await _detectFlowCore(image);
 
     isBusy = false;
 
     return result;
   }
 
-  Future<DetectResult> _detectFlowCore(InputImage mlKitImage, Image image) async {
+  Future<DetectResult> _detectFlowCore(InputImage inputImage) async {
     // Do MLKit's face detection.
-    final faceList = await _faceDetectModel.detect(mlKitImage);
+    final faceList = await _faceDetectModel.detect(inputImage);
 
     // No face in image.
     if (faceList.isEmpty) return DetectResult(true);
@@ -75,9 +75,11 @@ class DetectModel {
     List<DetectPerson> unknownList = List.empty(growable: true);
     List<DetectPerson> knownList = List.empty(growable: true);
 
+    final image = ImageHelper().decodeYUV420SP(inputImage);
+
     // Process each face in detected face list
     for (final face in faceList) {
-      final croppedImage = ImageHelper.cropFace(image, face);
+      final croppedImage = ImageHelper.cropFace(image, face, inputImage.metadata!.rotation);
 
       final feature = getFaceFeature(croppedImage);
 

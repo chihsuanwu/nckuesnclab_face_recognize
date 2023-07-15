@@ -3,7 +3,6 @@
 import 'package:flutter_tts/flutter_tts.dart';
 
 import 'detectModel.dart';
-import 'package:image/image.dart';
 
 
 class KnownPerson {

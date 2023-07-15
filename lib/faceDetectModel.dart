@@ -11,7 +11,7 @@ class FaceDetectModel {
   final faceDetector = GoogleMlKit.vision.faceDetector(FaceDetectorOptions(
     // enableTracking: true,
     minFaceSize: 0.2,
-    mode: FaceDetectorMode.accurate
+      performanceMode: FaceDetectorMode.accurate
   ));
 
   Future<List<Face>> detect(InputImage inputImage) async {
@@ -20,6 +20,8 @@ class FaceDetectModel {
     isBusy = true;
     final result = await faceDetector.processImage(inputImage);
     isBusy = false;
+
+    print("faceDetector.processImage ${result.length} faces");
 
     return result;
   }

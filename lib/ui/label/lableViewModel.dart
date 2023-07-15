@@ -228,7 +228,7 @@ class LabelViewModel {
 
       for (final image in d.images) {
         if (image.faceImg == null) continue;
-        Image img = decodeImage(image.faceImg!.toList())!;
+        Image img = decodeImage(image.faceImg!)!;
         img = copyResize(img, width: 112, height: 112);
         final result = mlModel.outputFaceFeature(img);
 

@@ -5,13 +5,14 @@ import 'dart:typed_data';
 import 'package:face_recognize/ImageHelper.dart';
 
 import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:tflite_flutter/src/bindings/tensorflow_lite_bindings_generated.dart';
 
 import 'package:image/image.dart' as imglib;
 
 class TFLiteModel {
   late Interpreter _interpreter;
 
-  late Interpreter _ageInterpreter;
+  // late Interpreter _ageInterpreter;
 
 
   late List _predictedData;
@@ -25,17 +26,17 @@ class TFLiteModel {
         delegate = GpuDelegateV2(
           options: GpuDelegateOptionsV2(
             isPrecisionLossAllowed: false,
-            inferencePreference: TfLiteGpuInferenceUsage.fastSingleAnswer,
-            inferencePriority1: TfLiteGpuInferencePriority.minLatency,
-            inferencePriority2: TfLiteGpuInferencePriority.auto,
-            inferencePriority3: TfLiteGpuInferencePriority.auto,
+            inferencePreference: TfLiteGpuInferenceUsage.TFLITE_GPU_INFERENCE_PREFERENCE_FAST_SINGLE_ANSWER,
+            inferencePriority1: TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_MIN_LATENCY,
+            inferencePriority2: TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
+            inferencePriority3: TfLiteGpuInferencePriority.TFLITE_GPU_INFERENCE_PRIORITY_AUTO,
           )
         );
       } else if (Platform.isIOS) {
         delegate = GpuDelegate(
           options: GpuDelegateOptions(
               allowPrecisionLoss: true,
-              waitType: TFLGpuDelegateWaitType.active
+              waitType: TFLGpuDelegateWaitType.TFLGpuDelegateWaitTypeActive
           ),
         );
       } else {
@@ -43,11 +44,12 @@ class TFLiteModel {
       }
       var interpreterOptions = InterpreterOptions()..addDelegate(delegate);
 
-      this._interpreter = await Interpreter.fromAsset('mobilefacenet.tflite',
+      this._interpreter = await Interpreter.fromAsset('assets/mobilefacenet.tflite',
           options: interpreterOptions);
+      // this._interpreter = await Interpreter.fromAsset('assets/mobilefacenet.tflite');
 
-      this._ageInterpreter = await Interpreter.fromAsset('age_model.tflite',
-          options: interpreterOptions);
+      // this._ageInterpreter = await Interpreter.fromAsset('age_model.tflite',
+      //     options: interpreterOptions);
 
       isInitialized = true;
     } catch (e) {
@@ -84,13 +86,13 @@ class TFLiteModel {
     print("=========== now $now2 ===========");
 
     if (predictAge) {
-      List ageOutput = List.generate(1, (index) => List.filled(1, 0));
+      // List ageOutput = List.generate(1, (index) => List.filled(1, 0));
 
-      List ageInput = _normalize(output);
+      // List ageInput = _normalize(output);
 
-      this._ageInterpreter.run(ageInput, ageOutput);
+      // this._ageInterpreter.run(ageInput, ageOutput);
 
-      print("=== age: $ageOutput");
+      // print("=== age: $ageOutput");
     }
 
     return reshaped;

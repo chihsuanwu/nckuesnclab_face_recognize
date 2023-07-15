@@ -94,117 +94,117 @@ class BLEDetectViewModel {
 
   StreamSubscription? _listener;
 
-  void startLoadingImage() async {
-    if (_imageStreaming) {
-      print("ERROR1========");
+  // void startLoadingImage() async {
+  //   if (_imageStreaming) {
+  //     print("ERROR1========");
+  //
+  //     return;
+  //   }
+  //
+  //   if (!_connected) {
+  //     print("ERROR2========");
+  //
+  //     return;
+  //   }
+  //
+  //   if (imageCharacteristic == null) {
+  //     print("ERROR3========");
+  //     return;
+  //   }
+  //
+  //   final characteristics = imageCharacteristic!;
+  //
+  //   _imageStreaming = true;
+  //
+  //   final imgData = List<int>.empty(growable: true);
+  //
+  //   // imgListData.clear();
+  //   _listener = characteristics.value.listen((event) {
+  //     final int index = event[0] * 256 + event[1];
+  //
+  //     imgData.addAll(event.sublist(2));
+  //     DateTime now = DateTime.now();
+  //     print("Index: $index, Time: $now");
+  //
+  //     if (index == 0) {
+  //       characteristics.setNotifyValue(false);
+  //
+  //       print("SUCCESS =================");
+  //       final newImage = Uint8List.fromList(imgData);
+  //       _imgController.add(newImage);
+  //
+  //       detectImage(newImage);
+  //
+  //       _listener?.cancel();
+  //
+  //       _imageStreaming = false;
+  //     }
+  //   });
+  //
+  //
+  //
+  //   characteristics.setNotifyValue(true);
+  //
+  //
+  // }
 
-      return;
-    }
-
-    if (!_connected) {
-      print("ERROR2========");
-
-      return;
-    }
-
-    if (imageCharacteristic == null) {
-      print("ERROR3========");
-      return;
-    }
-
-    final characteristics = imageCharacteristic!;
-
-    _imageStreaming = true;
-
-    final imgData = List<int>.empty(growable: true);
-
-    // imgListData.clear();
-    _listener = characteristics.value.listen((event) {
-      final int index = event[0] * 256 + event[1];
-
-      imgData.addAll(event.sublist(2));
-      DateTime now = DateTime.now();
-      print("Index: $index, Time: $now");
-
-      if (index == 0) {
-        characteristics.setNotifyValue(false);
-
-        print("SUCCESS =================");
-        final newImage = Uint8List.fromList(imgData);
-        _imgController.add(newImage);
-        
-        detectImage(newImage);
-
-        _listener?.cancel();
-
-        _imageStreaming = false;
-      }
-    });
-
-
-
-    characteristics.setNotifyValue(true);
-
-
-  }
-
-  void detectImage(Uint8List image) async {
-    Image img = decodeImage(image)!;
-
-    final inputImage = _createInputImage(img);
-    final result = await _faceDetectModel.detect(inputImage);
-
-    for (final r in result) {
-      print("boundingBox ==========");
-      print(r.boundingBox);
-    }
-
-    if (result.isEmpty) {
-      return;
-    }
-
-    final croppedImage = ImageHelper.cropFace(img, result.first);
-
-    final mlResult = _predictFace(croppedImage);
-
-    PersonData? person;
-    if (mlResult != null) {
-      print("result not null ==========");
-
-      person = _detectedDB.findClosestFace(mlResult);
-    }
-
-    List<PaintData> paintData = List.empty(growable: true);
-    paintData.add(PaintData(result.first, person?.name));
-
-    final painter = FaceDetectorPainter(
-        paintData,
-        inputImage.inputImageData!.size,
-        inputImage.inputImageData!.imageRotation
-    );
-
-    _painterController.add(painter);
-  }
-
-  InputImage _createInputImage(Image image) {
-    final Size imageSize = Size(image.width.toDouble(), image.height.toDouble());
-    final InputImageRotation imageRotation = InputImageRotation.Rotation_0deg;
-    final InputImageFormat inputImageFormat = InputImageFormat.NV21;
-
-    final inputImageData = InputImageData(
-      size: imageSize,
-      imageRotation: imageRotation,
-      inputImageFormat: inputImageFormat,
-      planeData: null,
-    );
-
-    return InputImage.fromBytes(bytes: Uint8List.fromList(image.data), inputImageData: inputImageData);
-  }
-
-  List<double>? _predictFace(Image image) {
-    if (!_mlModel.isInitialized) return null;
-
-    return _mlModel.outputFaceFeature(image);
-  }
+  // void detectImage(Uint8List image) async {
+  //   Image img = decodeImage(image)!;
+  //
+  //   final inputImage = _createInputImage(img);
+  //   final result = await _faceDetectModel.detect(inputImage);
+  //
+  //   for (final r in result) {
+  //     print("boundingBox ==========");
+  //     print(r.boundingBox);
+  //   }
+  //
+  //   if (result.isEmpty) {
+  //     return;
+  //   }
+  //
+  //   final croppedImage = ImageHelper.cropFace(img, result.first);
+  //
+  //   final mlResult = _predictFace(croppedImage);
+  //
+  //   PersonData? person;
+  //   if (mlResult != null) {
+  //     print("result not null ==========");
+  //
+  //     person = _detectedDB.findClosestFace(mlResult);
+  //   }
+  //
+  //   List<PaintData> paintData = List.empty(growable: true);
+  //   paintData.add(PaintData(result.first, person?.name));
+  //
+  //   final painter = FaceDetectorPainter(
+  //       paintData,
+  //       inputImage.inputImageData!.size,
+  //       inputImage.inputImageData!.imageRotation
+  //   );
+  //
+  //   _painterController.add(painter);
+  // }
+  //
+  // InputImage _createInputImage(Image image) {
+  //   final Size imageSize = Size(image.width.toDouble(), image.height.toDouble());
+  //   final InputImageRotation imageRotation = InputImageRotation.Rotation_0deg;
+  //   final InputImageFormat inputImageFormat = InputImageFormat.NV21;
+  //
+  //   final inputImageData = InputImageData(
+  //     size: imageSize,
+  //     imageRotation: imageRotation,
+  //     inputImageFormat: inputImageFormat,
+  //     planeData: null,
+  //   );
+  //
+  //   return InputImage.fromBytes(bytes: image.getBytes(), inputImageData: inputImageData);
+  // }
+  //
+  // List<double>? _predictFace(Image image) {
+  //   if (!_mlModel.isInitialized) return null;
+  //
+  //   return _mlModel.outputFaceFeature(image);
+  // }
 
 }

@@ -59,10 +59,10 @@ class BLEDetectPage extends StatelessWidget {
         )
       ]
     ),
-    floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.search),
-        onPressed: () => vm.startLoadingImage()
-    )
+    // floatingActionButton: FloatingActionButton(
+    //     child: Icon(Icons.search),
+    //     onPressed: () => vm.startLoadingImage()
+    // )
   );
 
 

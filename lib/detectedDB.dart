@@ -38,7 +38,11 @@ class DetectedDB {
   DetectedDB(this._comparator);
 
   Future<void> loadData() async {
-    final dataStr = await FileRepo().readFile("saved_data.json");
+    String dataStr = await FileRepo().readFile("saved_data.json");
+    print(dataStr);
+    if (dataStr.isEmpty) {
+      dataStr = "[]";
+    }
     List<dynamic> dataJson = json.decode(dataStr);
 
     for (final data in dataJson) {

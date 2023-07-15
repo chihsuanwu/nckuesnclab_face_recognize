@@ -1,3 +1,4 @@
+import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:face_recognize/ImageHelper.dart';
@@ -44,6 +45,9 @@ class CameraViewModel extends ChangeNotifier {
     cameraController = CameraController(
       _camera,
       ResolutionPreset.medium,
+      imageFormatGroup: Platform.isAndroid
+          ? ImageFormatGroup.nv21 // for Android
+          : ImageFormatGroup.bgra8888, // for iOS
     );
 
     cameraController.initialize().then((value) {
@@ -95,11 +99,20 @@ class CameraViewModel extends ChangeNotifier {
     _detectUnknownModel.createUnlabeledFile();
   }
 
+  var ctr = 0;
+
   Future _onImageAvailable(CameraImage cameraImage) async {
     if (_detectModel.isBusy) return;
     if (showInputDialog) return;
 
-    final image = ImageHelper.convertCameraImage(cameraImage);
+    ctr += 1;
+
+    if (ctr % 20 != 0) return;
+
+    final image = //ImageHelper.convertCameraImage(cameraImage);
+        ImageHelper().inputImageFromCameraImage(cameraImage)!;
+
+    print("image size: ${image.metadata?.size.width} x ${image.metadata?.size.height}");
 
     final result = await _detectModel.runFlow(image);
 
@@ -113,11 +126,12 @@ class CameraViewModel extends ChangeNotifier {
         paintData.add(PaintData(element.face, element.name));
       });
 
-      final inputImage = ImageHelper.createInputImage(image);
+      // final inputImage = ImageHelper.createInputImage(image);
+      print("rotate: ${image.metadata?.rotation}");
       painter = FaceDetectorPainter(
           paintData,
-          inputImage.inputImageData!.size,
-          inputImage.inputImageData!.imageRotation
+          image.metadata!.size,
+          image.metadata!.rotation,
       );
 
       if (result.unknownList?.isNotEmpty == true) {
